@@ -203,14 +203,14 @@ const tagColors: tagKeys = {
   padding-right: 0px;
   padding-left: 0px;  
   
-  font-family: 'Futura';
+  font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
   font-size: 18px;
   font-weight: 800px;
 }
 
 .help {
     color: gray;
-    font-family: 'Futura';
+    font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
     font-weight: 800px;
     font-size: 18px;
     margin-left: 10px;
@@ -245,7 +245,7 @@ const tagColors: tagKeys = {
   padding-bottom: 2px;
   min-width: 70px;
   
-  font-family: 'STSong', sans-serif;
+  font-family: 'STSong', 'SimSun', 'NSimSun', serif;
   font-size: 20px;
   line-height: 27px;
 }
@@ -261,7 +261,7 @@ const tagColors: tagKeys = {
 
 .pinyin {
   font-size: 16px;
-  font-family: 'Georgia', 'Palatino';
+  font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Garamond', serif;
   font-style: bold;
   font-weight: 800;
 }
@@ -270,8 +270,6 @@ const tagColors: tagKeys = {
   padding-left: 10px;
 }
 
-.part-of-sentence {
-}
 .tag {
     white-space: nowrap;
     /* display: inline-block; */
@@ -287,7 +285,7 @@ const tagColors: tagKeys = {
 
   font-size: 12px;
   line-height: 26px;
-  font-family: 'helvetica', 'arial';
+  font-family: 'Helvetica', 'Arial', 'Verdana', sans-serif;
   font-weight: 200;
   text-align: center;
 }

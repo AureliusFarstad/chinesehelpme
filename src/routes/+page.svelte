@@ -206,7 +206,7 @@
 		width: 42px;
 
         font-size: 18px;
-		font-family: 'Futura';
+        font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
 		text-align: center;
 	}
 
@@ -287,7 +287,7 @@
 
         font-size: 18px;
 		line-height: 40px;
-		font-family: 'Futura';
+        font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
 	}
 
 	.score {
@@ -299,7 +299,7 @@
         
 		font-size: 20px;
 		line-height: 32px;
-        font-family: 'Futura';
+        font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
 		font-weight: 400;
         text-align: center;
         color: black;

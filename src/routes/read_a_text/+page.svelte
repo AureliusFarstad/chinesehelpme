@@ -1,7 +1,7 @@
 <script lang="ts">
     import SegmentTable from './segmentTable.svelte';
     import xss from 'xss';
-    const transformTextEndpoint = "http://localhost:8000/transform/"
+    const transformTextEndpoint = "https://marcusfarstad.com/transform/"
 
     type CEDICTEntry = {
         definitions: string[],
@@ -77,20 +77,28 @@
     async function submitText() {
         try {
             let text = textBoxEl.innerText
+            if (text == "") {
+                alert("Text is required.");
+                return;
+            }
             // Sanitize the text
             text = xss(text)
-
+            
             // Split the text input into an array of sentences
             let sentences = splitSentences(text)
             // Remove any empty strings from the array of sentences
             sentences = sentences.filter(Boolean);
-            // Remove any leading or trailing whitespace from each sentence in the array
+            console.log("fitler")
+            console.log(sentences)
+            if (sentences.length == 0) {
+                alert("Text is required.");
+                return;
+            }            // Remove any leading or trailing whitespace from each sentence in the array
             sentences = sentences.map(sentence => sentence.trim());
 
             // Wait for the result of the `segmentChinese` function before continuing
             const data = await segmentChinese(sentences);
             // Enter toggling mode
-            console.log(data)
             segments = data.segments
             editing = false
         } catch (error) {
@@ -116,7 +124,8 @@
     <div 
         id="editable" class="box" 
         bind:this={textBoxEl} 
-        contentEditable=true data-text="写这里。Enter text here."
+        contentEditable=true 
+        data-text="写这里。Enter text here."
         on:paste={handlePaste}
     ></div>
 
@@ -187,7 +196,7 @@
     padding-left: 5px;
     padding-right: 5px;
 
-    font-family: 'STSong', sans-serif;
+    font-family: 'STSong', 'SimSun', 'NSimSun', serif;
     font-size: 18px;
     line-height: 48px;
     vertical-align: text-bottom;
@@ -207,7 +216,7 @@
     border: 1px solid red;
 }
 .button {
-    font-family: 'Futura', sans-serif;
+    font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
     width: 150px;
     height: 40px;
     border: none;

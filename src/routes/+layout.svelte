@@ -1,10 +1,16 @@
+<script lang="ts">
+    import { page } from '$app/stores';
+    let path: string;
+    $: path = $page.url.pathname;
+</script>
+
 <div class="header">
     <div id="centered">
         <h1><a href="/">chinesehelp.me</a></h1>
         <nav>
             <ul>
-              <li><a href="/">HSK Sniper 🔫</a></li>
-              <li><a href="/read_a_text">Long Text Processer</a></li>
+              <li class:active="{path === '/'}"><a href="/">HSK Sniper</a></li>
+              <li class:active="{path === '/read_a_text'}"><a href="/read_a_text">Long Text Processer</a></li>
               <!-- <li><a href="/word_tiger">Text Processer Penguin 🐧</a></li> -->
             </ul>
         </nav>
@@ -16,6 +22,8 @@
 <slot></slot>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700;900&family=Nunito+Sans&display=swap');
+
     .header {
         position: fixed;
         z-index: 10;
@@ -26,6 +34,10 @@
         height: 50px;
     
         background-image: linear-gradient(45deg, #CC0000, #FF9999);
+    }
+
+    .active {
+        text-decoration: underline;
     }
 
     .displacement {
@@ -46,7 +58,7 @@
 
         font-size: 24px;
         line-height: 50px;
-        font-family: 'Futura', sans-serif;
+        font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
         font-weight: 400;
         color: #ffffff;
     }
@@ -64,8 +76,7 @@
 
     li {
         margin-right: 50px;
-
-        font-family: 'Futura', sans-serif;
+        font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
         font-weight: 400;
         color: #ffffff;
     }
