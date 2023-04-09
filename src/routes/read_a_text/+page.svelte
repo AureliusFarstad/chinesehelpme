@@ -42,34 +42,28 @@
     }
 
     // Return to edit input text mode. todo: more logic on handover.
-    async function editText() {
+    function editText() { 
         editing = true
     }
 
     async function segmentChinese(sentences: string[]) {
-        const body = {
-            sentences: sentences
-        }
-        const headers = {
-            'Content-Type':'application/json',
-            'Access-Control-Allow-Origin':'*',
-            'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS',
-            'Access-Control-Allow-Headings':'Content-Type',
-        }
-        // Make the request asynchronously using the `await` keyword
         const response = await fetch(transformTextEndpoint, {
             method: "POST",
-            body: JSON.stringify(body),
-            headers: headers
-        })
-        const data = await response.json()
-        return data
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sentences })
+        });
+        return await response.json();
     }
 
     function splitSentences(text: string) {
         const delimRegex = /[。.?？!！]/g;
         let splitText = text.split(delimRegex);
         let delimeters = text.match(delimRegex);
+        if (delimeters == null) {
+            return [text]
+        }
         const sentences = splitText.map((sentence, index) => `${sentence}${delimeters![index]||""}`);
         return sentences
     }
@@ -86,6 +80,7 @@
             
             // Split the text input into an array of sentences
             let sentences = splitSentences(text)
+
             // Remove any empty strings from the array of sentences
             sentences = sentences.filter(Boolean);
             console.log("fitler")
@@ -93,11 +88,14 @@
             if (sentences.length == 0) {
                 alert("Text is required.");
                 return;
-            }            // Remove any leading or trailing whitespace from each sentence in the array
+            } 
+
+            // Remove any leading or trailing whitespace from each sentence in the array
             sentences = sentences.map(sentence => sentence.trim());
 
             // Wait for the result of the `segmentChinese` function before continuing
             const data = await segmentChinese(sentences);
+
             // Enter toggling mode
             segments = data.segments
             editing = false
@@ -120,36 +118,39 @@
 </script>
 
 <div class="on-screen">
-{#if editing}
-    <div 
-        id="editable" class="box" 
-        bind:this={textBoxEl} 
-        contentEditable=true 
-        data-text="写这里。Enter text here."
-        on:paste={handlePaste}
-    ></div>
-
-    <div class="button-row">
+    <div class="flex-text">
+        {#if editing}
+        <div 
+            id="editable" class="box" 
+            bind:this={textBoxEl} 
+            contentEditable=true 
+            data-text="写这里。Enter text here."
+            on:paste={handlePaste}
+        ></div>
         <button id="submit-text" class="button" on:click={submitText}>Submit text.</button>
-    </div>
-
-{:else}
-    <div id="clickable" class="box">
-        {#each segments as s}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span 
-                on:click="{() => {toggle(s)}}"
-                class="segmentSpan {toggledWords.includes(s.ws) ? 'selected': ''}"
-            >{s.ws}{#if toggledWords.includes(s.ws)}<span class="footnote">{sortedWords.indexOf(s.ws)}</span>{/if}</span>
-        {/each}
-    </div>
-
-    <div class="button-row">
+        {:else}
+        <div id="clickable" class="box">
+            {#each segments as s}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <span 
+                    on:click="{() => {toggle(s)}}"
+                    class="segmentSpan {toggledWords.includes(s.ws) ? 'selected': ''}"
+                >{s.ws}{#if toggledWords.includes(s.ws)}<span class="footnote">{sortedWords.indexOf(s.ws)}</span>{/if}</span>
+            {/each}
+        </div>
         <button id="edit-text" class="button" on:click={editText}>Edit text.</button>
+        {/if}
     </div>
 
-    <SegmentTable {sortedSegments}/>
-{/if}
+    <div class="flex-dict">
+        <div class="table-row">
+            <SegmentTable {sortedSegments}/>
+        </div>
+
+        <div class="button-row">
+
+        </div>
+    </div>
 </div>
 
 <div id="container"></div>
@@ -167,8 +168,9 @@
 }
 .on-screen {
     display: flex;
+    flex-direction: row;
     z-index: 30;
-    flex-flow: column;
+    gap: 8px;
 
     background-color: white;
 
@@ -187,24 +189,64 @@
     padding-left: 8px;
     padding-right: 8px;
 }
+.flex-text {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    /* min-width: 350px; */
+}
+.flex-dict {
+    max-width: 400px;
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+@media (max-width: 650px) {
+  .on-screen {
+    flex-direction: column;
+  }
+  .flex-text {
+    /* height: 200px; */
+  }
+  .flex-dict {
+    max-width: 100%;
+    width: 100%
+  }
+}
+
 .box {
+    background-color: rgb(240, 240, 240);
     text-align: left;
-    min-height: 50%;
-    border-radius: 3px;
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
 
     padding-top: 15px;
     padding-left: 5px;
     padding-right: 5px;
 
     font-family: 'STSong', 'SimSun', 'NSimSun', serif;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 48px;
     vertical-align: text-bottom;
-    overflow: scroll;
+
+    overflow: auto;
 }
+
+/* .box::-webkit-scrollbar {
+  width: 10px;
+}
+.box::-webkit-scrollbar-thumb {
+  background: #FF9999; 
+}
+.box::-webkit-scrollbar-thumb:hover {
+  background: #FF6666; 
+} */
+
 #editable { 
     color: black;
-    border: 1px solid #009900;
+    border: 2px solid #009900;
 }
 #clickable {
     background-color: rgb(222, 222, 222);
@@ -217,13 +259,21 @@
 }
 .button {
     font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
-    width: 150px;
+    max-width: 100%;
+    width: 280px;
     height: 40px;
     border: none;
 
+    position: relative;
+    bottom: 48px;
+    left: -8px;
+    float: right;
+    /* left: calc(100% - 328px);  */
+    /* calc(100% - max(320px, 100%)); */
+
     border-radius: 4px;
   
-    font-size: 18px;
+    font-size: 22px;
 }
 #submit-text {
     background-image: linear-gradient(60deg, #33CC33, #00CC00);
@@ -236,9 +286,11 @@
     background-image: linear-gradient(60deg, #66CC66, #00FF00);
     color: black;
 }
-.button-row {
-    display: flex;
-    margin-top: 8px;
+.table-row {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    height: 100%;
 }
 #edit-text {	
   background-color: black;
@@ -252,6 +304,7 @@
 [contentEditable=true]:empty:not(:focus):before {
   content: attr(data-text);
   color: #009900;
+  font-size: 24px;
 }
 
 

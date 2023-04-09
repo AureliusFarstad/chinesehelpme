@@ -147,91 +147,108 @@ const tagColors: tagKeys = {
 </script>
 <div class="scroll">
 <div class="toggled-segments-table">
-    <div class="header index-header"></div>
+    <!-- <div class="header index-header"></div>
     <div class="header word-header">Word</div>
     <div class="header dictionary-header">Dictionary</div>
-    <div class="header part-of-sentence-header">Part of Sentence</div>
+    <div class="header part-of-sentence-header">Part of Sentence</div> -->
 
     {#each sortedSegments as s, i}
-        <div class="count row">{i}</div>
-        <div class="word row">{s.ws}</div>
-        <div class="dictionary row">
-            {#if s.def}
-                {#each s.def as dict_entry, i}
-                    <div class="dictionary-entry">
-                        <span class="pinyin">{pinyin(dict_entry.pinyin.toLowerCase())}</span>
-                        <span class="definition">{dict_entry.definitions.join(', ')}</span>
-                    </div>
-                {/each}
-            {/if}
+        <div class="segment">
+        <div class="index-col">{i}</div>
+        <div class="meta-col">
+            <div class="meta-row">
+                <div class="word-col word">{s.ws}</div>
+                <div class="pos-col">
+                    {#each s.pos as tag}
+                        <span 
+                            class="tag" 
+                            style:background-color="{tagColors[tag]}">
+                            {tagDict[tag]}
+                        </span>
+                    {/each}
+                </div>
+            </div>
+            <div class="dict-row">
+                {#if s.def}
+                    {#each s.def as dict_entry, i}
+                        <div class="dictionary-entry">
+                            <span class="pinyin">{pinyin(dict_entry.pinyin.toLowerCase())}</span>
+                            <span class="definition">{dict_entry.definitions.join(', ')}</span>
+                        </div>
+                    {/each}
+                {/if}
+            </div>
         </div>
-        <div class="part-of-sentence row">
-            {#each s.pos as tag}
-                <span 
-                    class="tag" 
-                    style:background-color="{tagColors[tag]}">
-                    {tagDict[tag]}
-                </span>
-            {/each}
-        </div>
+    </div>
     {/each}
 </div>
 </div>
-{#if sortedSegments.length == 0}
+<!-- {#if sortedSegments.length == 0}
 <div class="help">Select words from the text.</div>
-{/if}
+{/if} -->
 
 <style>
 .scroll {
-    overflow: scroll;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    overflow: auto;
 }
+
 .toggled-segments-table {
-  display: grid;
-  grid-template-columns: auto auto 10fr 6fr;
-  grid-column-gap: 8px;
-  grid-template-rows: 28px repeat(auto-fill, minmax(8px, auto));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* align-items: stretch; */
+    width: 100%;
+    /* font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif; */
+    /* font-size: 14px; */
+    /* font-weight: 400; */
+    color: #333;
+    background-color: #fff;
+    padding: 0;
+    margin: 0;
 
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
+    /* overflow-y: scroll; */
 
-  overflow: scroll;  /* overflow condition on parent */
+    /* overflow: scroll; */
 }
 
-.header  {
-  border-bottom: 1px solid #FF9999;
-  padding-right: 0px;
-  padding-left: 0px;  
-  
-  font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
-  font-size: 18px;
-  font-weight: 800px;
+.segment {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid #333;
+    padding-top: 4px;
 }
 
-.help {
-    color: gray;
-    font-family: 'Futura', 'Nunito Sans', 'Calibri', 'Verdana', sans-serif;
-    font-weight: 800px;
-    font-size: 18px;
-    margin-left: 10px;
+.index-col {
+    width: 14px;
+    padding-left: 4px;
+    line-height: 20px;;
+    /* padding-top: 0px; */
 }
 
-.index-header {
-    padding-right: 6px;
-    padding-left: 6px;
-    min-width: 14px;
-}
-.word-header {
-    padding-right: 6px;
-    padding-left: 6px;
-    min-width: 70px;
+.meta-col {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+  /* justify-content: space-between; */
 }
 
-.row {
-  border-bottom: 1px solid #FF9999;
-  padding-right: 4px;
-  padding-left: 4px; 
+.meta-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
+
+.pos-col {
+  overflow: hidden;
+}
+
+
+
 
 .count {
   font-family: serif;
@@ -241,13 +258,12 @@ const tagColors: tagKeys = {
 
 .word {
   padding-right: 6px;
-  padding-left: 6px;
-  padding-bottom: 2px;
+  padding-left: 2px;
   min-width: 70px;
   
   font-family: 'STSong', 'SimSun', 'NSimSun', serif;
   font-size: 20px;
-  line-height: 27px;
+  line-height: 20px;
 }
 
 .dictionary-entry {
@@ -272,7 +288,6 @@ const tagColors: tagKeys = {
 
 .tag {
     white-space: nowrap;
-    /* display: inline-block; */
   border-radius: 8px;
   margin-top: 2px;
   margin-right: 4px;
@@ -281,7 +296,7 @@ const tagColors: tagKeys = {
   padding-top: 3px;
   padding-bottom: 3px;
   height: 26px;
-  width: 26px;
+  /* width: 26px; */
 
   font-size: 12px;
   line-height: 26px;
